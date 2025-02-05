@@ -12,7 +12,17 @@ const index = (req, res) => {
 
 const show = (req, res) => {
     const id = req.params.id;
-    res.send(`Mostro il post con id ${id}`)
+    const sql = 'SELECT * FROM posts WHERE id = ?'
+
+    connection.query(sql, [id], (err, results) => {
+        if (err) res.status(500).json({ error: 'Query al database fallita' })
+
+        if (results.length === 0) return res.status(404).json({ error: 'post non trovato' });
+
+        const post = results[0];
+
+        res.json(post)
+    })
 };
 
 const store = (req, res) => {
